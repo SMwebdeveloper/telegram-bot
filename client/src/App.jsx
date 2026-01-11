@@ -56,7 +56,7 @@ const App = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(cartItems),
+        body: JSON.stringify({products: cartItems, queryId:queryId}),
       });
     } else {
       telegram.sendData(JSON.stringify(cartItems));
