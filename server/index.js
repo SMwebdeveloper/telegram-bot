@@ -19,7 +19,7 @@ const bootstrap = () => {
                 {
                   text: "Kurslarni ko'rish",
                   web_app: {
-                    url: "https://portfolio-smwebdeveloper.vercel.app/",
+                    url: "https://telegram-bot-psi-sage.vercel.app/",
                   },
                 },
               ],
@@ -27,6 +27,9 @@ const bootstrap = () => {
           },
         }
       );
+    }
+    if(msg.web_app_data?.data) {
+        console.log(msg.web_app_data?.data)
     }
   });
 };
