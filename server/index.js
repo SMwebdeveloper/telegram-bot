@@ -92,7 +92,30 @@ const bootstrap = () => {
 
 bootstrap();
 
-app.post("/web-data", async (req, res) => {});
+app.post("/web-data", async (req, res) => {
+  const { queryID, products } = req.body;
+
+  try {
+    await bot.answerWebAppQuery(queryID, {
+      type: "article",
+      id: queryID,
+      title: "Muvaffaqiyatli xarid qildingiz",
+      input_message_content: {
+        message_text: `Xaridingiz bilan tabriklayman, siz ${products
+          .reduce((a, c) => a + c.price * c.quantity, 0)
+          .toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })} qiymatga ega mahsulot sotib oldingiz, ${products
+          .map((c) => `${c.title} ${c.quantity}X`)
+          .join(", ")}`,
+      },
+    });
+    return res.status(200).json({});
+  } catch (error) {
+    return res.status(500).json({});
+  }
+});
 
 app.listen(process.env.PORT || 800, () => {
   console.log("Server started");
