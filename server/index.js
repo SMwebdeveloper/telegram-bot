@@ -4,6 +4,16 @@ const token = "8551506820:AAFxHK-mMY_EU_DzsutB04rqgetTUo5Tm7A";
 const bot = new TelegramBot(token, { polling: true });
 
 const bootstrap = () => {
+  bot.setMyCommands([
+    {
+      command: "/start",
+      description: "Kurlarimizni sotib oling",
+    },
+    {
+      command: "/courses",
+      description: "Barcha kurslar",
+    },
+  ]);
   bot.on("message", async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
@@ -28,8 +38,47 @@ const bootstrap = () => {
         }
       );
     }
-    if(msg.web_app_data?.data) {
-        console.log(msg.web_app_data?.data)
+    if (text === "/courses") {
+      await bot.sendMessage(chatId, "Kurslarga hush kelibsiz", {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "Kurslarni ko'rish",
+                web_app: {
+                  url: "https://telegram-bot-psi-sage.vercel.app",
+                },
+              },
+            ],
+          ],
+        },
+      });
+    }
+    if (msg.web_app_data?.data) {
+      try {
+        const data = JSON.parse(msg.web_app_data?.data);
+
+        await bot.sendMessage(
+          chatId,
+          "Bizga ishonch bildirganiz uchun rahmat, siz sotib olgan kurslarni ro'yhati"
+        );
+
+        for (item of data) {
+          await bot.sendMessage(chatId, `${item.title} - ${item.quantity}x`);
+        }
+
+        await bot.sendMessage(
+          chatId,
+          `Umumiy narx - ${data
+            .reduce((a, c) => a + c.price * c.quantity, 0)
+            .toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })}`
+        );
+      } catch (error) {
+        console.log(error);
+      }
     }
   });
 };
